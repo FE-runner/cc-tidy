@@ -6,10 +6,12 @@
   "bin": {
     "claude-tidy": "./dist/cli.js"
   },
+  "files": ["dist"],
   "scripts": {
     "dev": "tsc && node dist/cli.js",
     "build": "tsc",
-    "start": "node dist/cli.js"
+    "start": "node dist/cli.js",
+    "release": "./scripts/release.sh"
   },
   "engines": {
     "node": ">=18.0.0"

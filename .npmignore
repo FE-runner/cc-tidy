@@ -1,0 +1,10 @@
+src/
+openspec/
+.claude/
+.github/
+scripts/
+tsconfig.json
+.prettierrc
+*.md
+!README.md
+!LICENSE
