@@ -14,11 +14,11 @@ export async function listFlow(target: string): Promise<void> {
 
 async function listRulesFlow(): Promise<void> {
   const scope = await select({
-    message: '查看哪些 rules？',
+    message: 'Which rules? / 查看哪些 rules？',
     choices: [
-      { value: 'all', name: '全部' },
-      { value: 'global', name: '全局' },
-      { value: 'project', name: '项目' },
+      { value: 'all', name: 'All / 全部' },
+      { value: 'global', name: 'Global / 全局' },
+      { value: 'project', name: 'Project / 项目' },
     ],
   });
 
@@ -40,21 +40,21 @@ async function listRulesFlow(): Promise<void> {
     globalRules.sort((a, b) => a.id.localeCompare(b.id));
     projectRules.sort((a, b) => a.id.localeCompare(b.id));
     console.log();
-    console.log('  全局 rules');
+    console.log('  Global rules / 全局 rules');
     printRules(globalRules, false);
     console.log();
-    console.log('  项目 rules');
+    console.log('  Project rules / 项目 rules');
     printRules(projectRules, false);
   }
 }
 
 async function listSkillsFlow(): Promise<void> {
   const scope = await select({
-    message: '查看哪些 skills？',
+    message: 'Which skills? / 查看哪些 skills？',
     choices: [
-      { value: 'all', name: '全部' },
-      { value: 'global', name: '全局' },
-      { value: 'project', name: '项目' },
+      { value: 'all', name: 'All / 全部' },
+      { value: 'global', name: 'Global / 全局' },
+      { value: 'project', name: 'Project / 项目' },
     ],
   });
 
@@ -76,10 +76,10 @@ async function listSkillsFlow(): Promise<void> {
     globalSkills.sort((a, b) => a.name.localeCompare(b.name));
     projectSkills.sort((a, b) => a.name.localeCompare(b.name));
     console.log();
-    console.log('  全局 skills');
+    console.log('  Global skills / 全局 skills');
     printSkills(globalSkills, false);
     console.log();
-    console.log('  项目 skills');
+    console.log('  Project skills / 项目 skills');
     printSkills(projectSkills, false);
   }
 }

@@ -23,7 +23,7 @@ function formatTrigger(rule: Rule): string {
     case 'globs':
       return chalk.yellow(`globs: ${rule.trigger.patterns}`);
     case 'none':
-      return chalk.dim('无');
+      return chalk.dim('none / 无');
   }
 }
 
@@ -32,8 +32,8 @@ function formatTrigger(rule: Rule): string {
  */
 function formatScope(scope: 'global' | 'project'): string {
   return scope === 'global'
-    ? chalk.blue('全局')
-    : chalk.magenta('项目');
+    ? chalk.blue('Global / 全局')
+    : chalk.magenta('Project / 项目');
 }
 
 /**
@@ -41,14 +41,14 @@ function formatScope(scope: 'global' | 'project'): string {
  */
 export function printRules(rules: Rule[], showScope: boolean): void {
   if (rules.length === 0) {
-    console.log(chalk.dim('未找到 rules'));
+    console.log(chalk.dim('No rules found / 未找到 rules'));
     return;
   }
 
   // 表头
   const headers = showScope
-    ? ['标识符', '作用域', '触发方式', '修改时间']
-    : ['标识符', '触发方式', '修改时间'];
+    ? ['ID / 标识符', 'Scope / 作用域', 'Trigger / 触发方式', 'Modified / 修改时间']
+    : ['ID / 标识符', 'Trigger / 触发方式', 'Modified / 修改时间'];
 
   console.log(chalk.bold(headers.join('\t')));
   console.log(chalk.dim('─'.repeat(80)));
@@ -60,7 +60,7 @@ export function printRules(rules: Rule[], showScope: boolean): void {
     console.log(cols.join('\t'));
   }
 
-  console.log(chalk.dim(`\n共 ${rules.length} 条 rules`));
+  console.log(chalk.dim(`\nTotal ${rules.length} rules / 共 ${rules.length} 条 rules`));
 }
 
 /**
@@ -68,23 +68,23 @@ export function printRules(rules: Rule[], showScope: boolean): void {
  */
 export function printSkills(skills: Skill[], showScope: boolean): void {
   if (skills.length === 0) {
-    console.log(chalk.dim('未找到 skills'));
+    console.log(chalk.dim('No skills found / 未找到 skills'));
     return;
   }
 
-  const headers = showScope ? ['名称', '作用域', '路径', '文件数'] : ['名称', '路径', '文件数'];
+  const headers = showScope ? ['Name / 名称', 'Scope / 作用域', 'Path / 路径', 'Files / 文件数'] : ['Name / 名称', 'Path / 路径', 'Files / 文件数'];
   console.log(chalk.bold(headers.join('\t')));
   console.log(chalk.dim('─'.repeat(80)));
 
   for (const skill of skills) {
-    const linkTag = skill.isSymlink ? chalk.cyan(' [链接]') : '';
+    const linkTag = skill.isSymlink ? chalk.cyan(' [link / 链接]') : '';
     const cols = showScope
       ? [skill.name + linkTag, formatScope(skill.scope), chalk.dim(skill.absolutePath), String(skill.fileCount)]
       : [skill.name + linkTag, chalk.dim(skill.absolutePath), String(skill.fileCount)];
     console.log(cols.join('\t'));
   }
 
-  console.log(chalk.dim(`\n共 ${skills.length} 个 skills`));
+  console.log(chalk.dim(`\nTotal ${skills.length} skills / 共 ${skills.length} 个 skills`));
 }
 
 /**
@@ -92,11 +92,11 @@ export function printSkills(skills: Skill[], showScope: boolean): void {
  */
 export function printDiffSummary(items: DiffSummaryItem[]): void {
   if (items.length === 0) {
-    console.log(chalk.dim('全局和项目之间没有同名 rules'));
+    console.log(chalk.dim('No duplicate rules between global and project / 全局和项目之间没有同名 rules'));
     return;
   }
 
-  console.log(chalk.bold('标识符\t全局 mtime\t项目 mtime\t状态'));
+  console.log(chalk.bold('ID / 标识符\tGlobal mtime / 全局 mtime\tProject mtime / 项目 mtime\tStatus / 状态'));
   console.log(chalk.dim('─'.repeat(80)));
 
   for (const item of items) {
@@ -106,19 +106,19 @@ export function printDiffSummary(items: DiffSummaryItem[]): void {
     let statusText: string;
     switch (item.status) {
       case '全局更新':
-        statusText = chalk.blue('全局更新 ↑');
+        statusText = chalk.blue('Global newer / 全局更新 ↑');
         break;
       case '项目更新':
-        statusText = chalk.magenta('项目更新 ↑');
+        statusText = chalk.magenta('Project newer / 项目更新 ↑');
         break;
       case '仅全局':
-        statusText = chalk.dim('仅全局');
+        statusText = chalk.dim('Global only / 仅全局');
         break;
       case '仅项目':
-        statusText = chalk.dim('仅项目');
+        statusText = chalk.dim('Project only / 仅项目');
         break;
       case '时间相同':
-        statusText = chalk.green('时间相同');
+        statusText = chalk.green('Same time / 时间相同');
         break;
     }
 

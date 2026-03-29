@@ -19,10 +19,10 @@ export async function moveFlow(target: string): Promise<void> {
 
 async function moveRulesFlow(): Promise<void> {
   const direction = await select({
-    message: '移动方向：',
+    message: 'Direction / 移动方向：',
     choices: [
-      { value: 'to-project', name: '全局 → 项目' },
-      { value: 'to-global', name: '项目 → 全局' },
+      { value: 'to-project', name: 'Global → Project / 全局 → 项目' },
+      { value: 'to-global', name: 'Project → Global / 项目 → 全局' },
     ],
   });
 
@@ -34,12 +34,12 @@ async function moveRulesFlow(): Promise<void> {
   const rules = scanRules(sourceDir, sourceScope as 'global' | 'project');
 
   if (rules.length === 0) {
-    console.log(chalk.dim(`  ${isToProject ? '全局' : '项目'}中没有 rules`));
+    console.log(chalk.dim(`  No rules in ${isToProject ? 'global / 全局' : 'project / 项目'}`));
     return;
   }
 
   const selected = await checkbox({
-    message: '选择要移动的 rules（a 全选，空格选择，回车确认）：',
+    message: 'Select rules to move (a=all, space=select, enter=confirm) / 选择要移动的 rules（a 全选，空格选择，回车确认）：',
     choices: rules
       .sort((a, b) => a.id.localeCompare(b.id))
       .map((rule) => ({
@@ -58,15 +58,15 @@ async function moveRulesFlow(): Promise<void> {
       const sourceStat = fs.statSync(sourcePath);
       const destStat = fs.statSync(destPath);
 
-      console.log(chalk.yellow(`\n  ⚠ 目标已存在 ${chalk.bold(ruleId)}`));
-      console.log(`    源    ${formatDate(sourceStat.mtime)}`);
-      console.log(`    目标  ${formatDate(destStat.mtime)}`);
+      console.log(chalk.yellow(`\n  ⚠ Target exists / 目标已存在 ${chalk.bold(ruleId)}`));
+      console.log(`    Source / 源    ${formatDate(sourceStat.mtime)}`);
+      console.log(`    Target / 目标  ${formatDate(destStat.mtime)}`);
 
       const action = await select({
-        message: `${ruleId} 如何处理？`,
+        message: `${ruleId} — How to handle? / 如何处理？`,
         choices: [
-          { value: 'overwrite', name: '覆盖' },
-          { value: 'skip', name: '跳过' },
+          { value: 'overwrite', name: 'Overwrite / 覆盖' },
+          { value: 'skip', name: 'Skip / 跳过' },
         ],
       });
 
@@ -79,11 +79,11 @@ async function moveRulesFlow(): Promise<void> {
     }
 
     fs.copyFileSync(sourcePath, destPath);
-    console.log(chalk.green(`  ✓ 已复制 ${ruleId} → ${isToProject ? '项目' : '全局'}`));
+    console.log(chalk.green(`  ✓ Copied / 已复制 ${ruleId} → ${isToProject ? 'project / 项目' : 'global / 全局'}`));
   }
 
   const shouldDelete = await confirm({
-    message: '是否删除源文件？',
+    message: 'Delete source files? / 是否删除源文件？',
     default: false,
   });
 
@@ -94,16 +94,16 @@ async function moveRulesFlow(): Promise<void> {
         fs.unlinkSync(sourcePath);
       }
     }
-    console.log(chalk.green(`  ✓ 已删除 ${selected.length} 个源文件`));
+    console.log(chalk.green(`  ✓ Deleted ${selected.length} source files / 已删除 ${selected.length} 个源文件`));
   }
 }
 
 async function moveSkillsFlow(): Promise<void> {
   const direction = await select({
-    message: '移动方向：',
+    message: 'Direction / 移动方向：',
     choices: [
-      { value: 'to-project', name: '全局 → 项目' },
-      { value: 'to-global', name: '项目 → 全局' },
+      { value: 'to-project', name: 'Global → Project / 全局 → 项目' },
+      { value: 'to-global', name: 'Project → Global / 项目 → 全局' },
     ],
   });
 
@@ -115,17 +115,17 @@ async function moveSkillsFlow(): Promise<void> {
   const skills = scanSkills(sourceDir, sourceScope as 'global' | 'project');
 
   if (skills.length === 0) {
-    console.log(chalk.dim(`  ${isToProject ? '全局' : '项目'}中没有 skills`));
+    console.log(chalk.dim(`  No skills in ${isToProject ? 'global / 全局' : 'project / 项目'}`));
     return;
   }
 
   const selected = await checkbox({
-    message: '选择要移动的 skills（a 全选，空格选择，回车确认）：',
+    message: 'Select skills to move (a=all, space=select, enter=confirm) / 选择要移动的 skills（a 全选，空格选择，回车确认）：',
     choices: skills
       .sort((a, b) => a.name.localeCompare(b.name))
       .map((skill) => ({
         value: skill.absolutePath,
-        name: `${skill.name}  ${chalk.dim(`${skill.fileCount} 个文件`)}`,
+        name: `${skill.name}  ${chalk.dim(`${skill.fileCount} files / 个文件`)}`,
       })),
   });
 
@@ -136,13 +136,13 @@ async function moveSkillsFlow(): Promise<void> {
     const destPath = path.join(destBaseDir, skill.name);
 
     if (fs.existsSync(destPath)) {
-      console.log(chalk.yellow(`\n  ⚠ 目标已存在 ${chalk.bold(skill.name)}`));
+      console.log(chalk.yellow(`\n  ⚠ Target exists / 目标已存在 ${chalk.bold(skill.name)}`));
 
       const action = await select({
-        message: `${skill.name} 如何处理？`,
+        message: `${skill.name} — How to handle? / 如何处理？`,
         choices: [
-          { value: 'overwrite', name: '覆盖' },
-          { value: 'skip', name: '跳过' },
+          { value: 'overwrite', name: 'Overwrite / 覆盖' },
+          { value: 'skip', name: 'Skip / 跳过' },
         ],
       });
 
@@ -157,15 +157,15 @@ async function moveSkillsFlow(): Promise<void> {
     // symlink 源创建 symlink 目标，普通目录复制
     if (skill.isSymlink && skill.symlinkTarget) {
       fs.symlinkSync(skill.symlinkTarget, destPath, 'junction');
-      console.log(chalk.green(`  ✓ 已创建软链 ${skill.name} → ${isToProject ? '项目' : '全局'}`));
+      console.log(chalk.green(`  ✓ Symlinked / 已创建软链 ${skill.name} → ${isToProject ? 'project / 项目' : 'global / 全局'}`));
     } else {
       fs.cpSync(sourcePath, destPath, { recursive: true });
-      console.log(chalk.green(`  ✓ 已复制 ${skill.name} → ${isToProject ? '项目' : '全局'}`));
+      console.log(chalk.green(`  ✓ Copied / 已复制 ${skill.name} → ${isToProject ? 'project / 项目' : 'global / 全局'}`));
     }
   }
 
   const shouldDelete = await confirm({
-    message: '是否删除源目录？',
+    message: 'Delete source directories? / 是否删除源目录？',
     default: false,
   });
 
@@ -175,6 +175,6 @@ async function moveSkillsFlow(): Promise<void> {
         fs.rmSync(sourcePath, { recursive: true, force: true });
       }
     }
-    console.log(chalk.green(`  ✓ 已删除 ${selected.length} 个源目录`));
+    console.log(chalk.green(`  ✓ Deleted ${selected.length} source directories / 已删除 ${selected.length} 个源目录`));
   }
 }

@@ -20,12 +20,13 @@ function getVersion(): string {
 }
 
 const HELP_TEXT = `
-cc-tidy — Claude Code 的 skills 和 rules 管理工具
+cc-tidy — Claude Code skills & rules management tool
+       Claude Code 的 skills 和 rules 管理工具
 
-用法:
-  cc-tidy              进入交互式管理流程
-  cc-tidy --help       显示帮助信息
-  cc-tidy --version    显示版本号
+Usage / 用法:
+  cc-tidy              Interactive management / 进入交互式管理流程
+  cc-tidy --help       Show help / 显示帮助信息
+  cc-tidy --version    Show version / 显示版本号
 `;
 
 async function main(): Promise<void> {
@@ -48,11 +49,11 @@ async function main(): Promise<void> {
 
   console.log(`
   ${chalk.bold.cyan('cc-tidy')}  ${chalk.dim('v' + getVersion())}
-  ${chalk.dim('Claude Code skills & rules 管理工具')}
+  ${chalk.dim('Claude Code skills & rules management tool / 管理工具')}
   `);
 
   const target = await select({
-    message: '管理什么？',
+    message: 'What to manage? / 管理什么？',
     choices: [
       { value: 'skills', name: 'skills' },
       { value: 'rules', name: 'rules' },
@@ -60,12 +61,12 @@ async function main(): Promise<void> {
   });
 
   const action = await select({
-    message: '要做什么？',
+    message: 'What to do? / 要做什么？',
     choices: [
-      { value: 'list', name: 'list    — 查看' },
-      { value: 'diff', name: 'diff    — 比对差异' },
-      { value: 'move', name: 'move    — 移动' },
-      { value: 'delete', name: 'delete  — 删除' },
+      { value: 'list', name: 'list    — View / 查看' },
+      { value: 'diff', name: 'diff    — Compare / 比对差异' },
+      { value: 'move', name: 'move    — Move / 移动' },
+      { value: 'delete', name: 'delete  — Delete / 删除' },
     ],
   });
 
@@ -84,10 +85,10 @@ async function main(): Promise<void> {
       break;
   }
 
-  console.log(chalk.green('\n  完成\n'));
+  console.log(chalk.green('\n  Done / 完成\n'));
 }
 
 main().catch((error: unknown) => {
-  console.error('执行出错:', error instanceof Error ? error.message : error);
+  console.error('Error / 执行出错:', error instanceof Error ? error.message : error);
   process.exit(1);
 });

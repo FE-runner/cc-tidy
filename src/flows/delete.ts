@@ -18,10 +18,10 @@ export async function deleteFlow(target: string): Promise<void> {
 
 async function deleteRulesFlow(): Promise<void> {
   const scope = await select({
-    message: '从哪里删除？',
+    message: 'Delete from? / 从哪里删除？',
     choices: [
-      { value: 'global', name: '全局' },
-      { value: 'project', name: '项目' },
+      { value: 'global', name: 'Global / 全局' },
+      { value: 'project', name: 'Project / 项目' },
     ],
   });
 
@@ -29,12 +29,12 @@ async function deleteRulesFlow(): Promise<void> {
   const rules = scanRules(rulesDir, scope as 'global' | 'project');
 
   if (rules.length === 0) {
-    console.log(chalk.dim(`  ${scope === 'global' ? '全局' : '项目'}中没有 rules`));
+    console.log(chalk.dim(`  No rules in ${scope === 'global' ? 'global / 全局' : 'project / 项目'}`));
     return;
   }
 
   const selected = await checkbox({
-    message: '选择要删除的 rules（a 全选，空格选择，回车确认）：',
+    message: 'Select rules to delete (a=all, space=select, enter=confirm) / 选择要删除的 rules（a 全选，空格选择，回车确认）：',
     choices: rules
       .sort((a, b) => a.id.localeCompare(b.id))
       .map((rule) => ({
@@ -45,19 +45,19 @@ async function deleteRulesFlow(): Promise<void> {
 
   if (selected.length === 0) return;
 
-  console.log(chalk.yellow('\n  将删除以下 rules：'));
+  console.log(chalk.yellow('\n  The following rules will be deleted / 将删除以下 rules：'));
   for (const filePath of selected) {
     const rule = rules.find((r) => r.absolutePath === filePath)!;
     console.log(`    ${chalk.bold(rule.id)}  ${chalk.dim(filePath)}`);
   }
 
   const confirmed = await confirm({
-    message: `确认删除 ${selected.length} 条 rules？`,
+    message: `Confirm delete ${selected.length} rules? / 确认删除 ${selected.length} 条 rules？`,
     default: false,
   });
 
   if (!confirmed) {
-    console.log(chalk.dim('  已取消'));
+    console.log(chalk.dim('  Cancelled / 已取消'));
     return;
   }
 
@@ -65,15 +65,15 @@ async function deleteRulesFlow(): Promise<void> {
     fs.unlinkSync(filePath);
   }
 
-  console.log(chalk.green(`  ✓ 已删除 ${selected.length} 条 rules`));
+  console.log(chalk.green(`  ✓ Deleted ${selected.length} rules / 已删除 ${selected.length} 条 rules`));
 }
 
 async function deleteSkillsFlow(): Promise<void> {
   const scope = await select({
-    message: '从哪里删除？',
+    message: 'Delete from? / 从哪里删除？',
     choices: [
-      { value: 'global', name: '全局' },
-      { value: 'project', name: '项目' },
+      { value: 'global', name: 'Global / 全局' },
+      { value: 'project', name: 'Project / 项目' },
     ],
   });
 
@@ -81,17 +81,17 @@ async function deleteSkillsFlow(): Promise<void> {
   const skills = scanSkills(skillsDir, scope as 'global' | 'project');
 
   if (skills.length === 0) {
-    console.log(chalk.dim(`  ${scope === 'global' ? '全局' : '项目'}中没有 skills`));
+    console.log(chalk.dim(`  No skills in ${scope === 'global' ? 'global / 全局' : 'project / 项目'}`));
     return;
   }
 
   const selected = await checkbox({
-    message: '选择要删除的 skills（a 全选，空格选择，回车确认）：',
+    message: 'Select skills to delete (a=all, space=select, enter=confirm) / 选择要删除的 skills（a 全选，空格选择，回车确认）：',
     choices: skills
       .sort((a, b) => a.name.localeCompare(b.name))
       .map((skill) => ({
         value: skill.absolutePath,
-        name: `${skill.name}  ${chalk.dim(`${skill.fileCount} 个文件`)}`,
+        name: `${skill.name}  ${chalk.dim(`${skill.fileCount} files / 个文件`)}`,
       })),
   });
 
@@ -101,18 +101,18 @@ async function deleteSkillsFlow(): Promise<void> {
     (sp) => skills.find((s) => s.absolutePath === sp)!,
   );
 
-  console.log(chalk.yellow('\n  将删除以下 skills：'));
+  console.log(chalk.yellow('\n  The following skills will be deleted / 将删除以下 skills：'));
   for (const skill of selectedSkills) {
-    console.log(`    ${chalk.bold(skill.name)}  ${chalk.dim(skill.absolutePath)}  (${skill.fileCount} 个文件)`);
+    console.log(`    ${chalk.bold(skill.name)}  ${chalk.dim(skill.absolutePath)}  (${skill.fileCount} files / 个文件)`);
   }
 
   const confirmed = await confirm({
-    message: `确认删除 ${selectedSkills.length} 个 skills？`,
+    message: `Confirm delete ${selectedSkills.length} skills? / 确认删除 ${selectedSkills.length} 个 skills？`,
     default: false,
   });
 
   if (!confirmed) {
-    console.log(chalk.dim('  已取消'));
+    console.log(chalk.dim('  Cancelled / 已取消'));
     return;
   }
 
@@ -120,5 +120,5 @@ async function deleteSkillsFlow(): Promise<void> {
     fs.rmSync(skillPath, { recursive: true, force: true });
   }
 
-  console.log(chalk.green(`  ✓ 已删除 ${selected.length} 个 skills`));
+  console.log(chalk.green(`  ✓ Deleted ${selected.length} skills / 已删除 ${selected.length} 个 skills`));
 }

@@ -42,18 +42,18 @@ async function diffRulesFlow(): Promise<void> {
   }
 
   if (duplicates.length === 0) {
-    console.log(chalk.dim('  全局和项目没有同名 rules'));
+    console.log(chalk.dim('  No duplicate rules between global and project / 全局和项目没有同名 rules'));
     return;
   }
 
-  console.log(chalk.bold(`\n  发现 ${duplicates.length} 条同名 rules\n`));
+  console.log(chalk.bold(`\n  Found ${duplicates.length} duplicate rules / 发现 ${duplicates.length} 条同名 rules\n`));
 
   const selected = await checkbox({
-    message: '选择要处理的 rules（a 全选，空格选择，回车确认）：',
+    message: 'Select rules to process (a=all, space=select, enter=confirm) / 选择要处理的 rules（a 全选，空格选择，回车确认）：',
     choices: duplicates.map(({ id, global: globalRule, project: projectRule }) => {
       const globalNewer = globalRule.mtime.getTime() > projectRule.mtime.getTime();
       const projectNewer = projectRule.mtime.getTime() > globalRule.mtime.getTime();
-      const hint = globalNewer ? ' (全局最新)' : projectNewer ? ' (项目最新)' : '';
+      const hint = globalNewer ? ' (global newer / 全局最新)' : projectNewer ? ' (project newer / 项目最新)' : '';
       return { value: id, name: `${id}${chalk.dim(hint)}` };
     }),
   });
@@ -66,26 +66,26 @@ async function diffRulesFlow(): Promise<void> {
     const projectNewer = dup.project.mtime.getTime() > dup.global.mtime.getTime();
 
     const choice = await select({
-      message: `${id} — 保留哪个？`,
+      message: `${id} — Keep which? / 保留哪个？`,
       choices: [
         {
           value: 'global',
-          name: `全局 (${formatDate(dup.global.mtime)})${globalNewer ? ' ← 最新' : ''}`,
+          name: `Global / 全局 (${formatDate(dup.global.mtime)})${globalNewer ? ' ← newest / 最新' : ''}`,
         },
         {
           value: 'project',
-          name: `项目 (${formatDate(dup.project.mtime)})${projectNewer ? ' ← 最新' : ''}`,
+          name: `Project / 项目 (${formatDate(dup.project.mtime)})${projectNewer ? ' ← newest / 最新' : ''}`,
         },
-        { value: 'skip', name: '跳过' },
+        { value: 'skip', name: 'Skip / 跳过' },
       ],
     });
 
     if (choice === 'global') {
       fs.unlinkSync(dup.project.absolutePath);
-      console.log(chalk.green(`  ✓ ${id} → 已删除项目版本`));
+      console.log(chalk.green(`  ✓ ${id} → Deleted project version / 已删除项目版本`));
     } else if (choice === 'project') {
       fs.unlinkSync(dup.global.absolutePath);
-      console.log(chalk.green(`  ✓ ${id} → 已删除全局版本`));
+      console.log(chalk.green(`  ✓ ${id} → Deleted global version / 已删除全局版本`));
     }
   }
 }
@@ -108,20 +108,20 @@ async function diffSkillsFlow(): Promise<void> {
   }
 
   if (duplicates.length === 0) {
-    console.log(chalk.dim('  全局和项目没有同名 skills'));
+    console.log(chalk.dim('  No duplicate skills between global and project / 全局和项目没有同名 skills'));
     return;
   }
 
-  console.log(chalk.bold(`\n  发现 ${duplicates.length} 个同名 skills\n`));
+  console.log(chalk.bold(`\n  Found ${duplicates.length} duplicate skills / 发现 ${duplicates.length} 个同名 skills\n`));
 
   const selected = await checkbox({
-    message: '选择要处理的 skills（a 全选，空格选择，回车确认）：',
+    message: 'Select skills to process (a=all, space=select, enter=confirm) / 选择要处理的 skills（a 全选，空格选择，回车确认）：',
     choices: duplicates.map(({ name, global: globalSkill, project: projectSkill }) => {
       const globalMtime = getLatestTime(path.join(globalSkill.absolutePath, 'SKILL.md'));
       const projectMtime = getLatestTime(path.join(projectSkill.absolutePath, 'SKILL.md'));
       const globalNewer = globalMtime.getTime() > projectMtime.getTime();
       const projectNewer = projectMtime.getTime() > globalMtime.getTime();
-      const hint = globalNewer ? ' (全局最新)' : projectNewer ? ' (项目最新)' : '';
+      const hint = globalNewer ? ' (global newer / 全局最新)' : projectNewer ? ' (project newer / 项目最新)' : '';
       return { value: name, name: `${name}${chalk.dim(hint)}` };
     }),
   });
@@ -136,26 +136,26 @@ async function diffSkillsFlow(): Promise<void> {
     const projectNewer = projectMtime.getTime() > globalMtime.getTime();
 
     const choice = await select({
-      message: `${name} — 保留哪个？`,
+      message: `${name} — Keep which? / 保留哪个？`,
       choices: [
         {
           value: 'global',
-          name: `全局 (${formatDate(globalMtime)})${globalNewer ? ' ← 最新' : ''}`,
+          name: `Global / 全局 (${formatDate(globalMtime)})${globalNewer ? ' ← newest / 最新' : ''}`,
         },
         {
           value: 'project',
-          name: `项目 (${formatDate(projectMtime)})${projectNewer ? ' ← 最新' : ''}`,
+          name: `Project / 项目 (${formatDate(projectMtime)})${projectNewer ? ' ← newest / 最新' : ''}`,
         },
-        { value: 'skip', name: '跳过' },
+        { value: 'skip', name: 'Skip / 跳过' },
       ],
     });
 
     if (choice === 'global') {
       fs.rmSync(dup.project.absolutePath, { recursive: true, force: true });
-      console.log(chalk.green(`  ✓ ${name} → 已删除项目版本`));
+      console.log(chalk.green(`  ✓ ${name} → Deleted project version / 已删除项目版本`));
     } else if (choice === 'project') {
       fs.rmSync(dup.global.absolutePath, { recursive: true, force: true });
-      console.log(chalk.green(`  ✓ ${name} → 已删除全局版本`));
+      console.log(chalk.green(`  ✓ ${name} → Deleted global version / 已删除全局版本`));
     }
   }
 }
